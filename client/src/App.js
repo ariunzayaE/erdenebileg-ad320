@@ -3,7 +3,11 @@ import React from 'react';  // added part
 import './App.css';
 import TopBar from './components/TopBar/TopBar'  // added part
 import CardNavigation from './components/CardNavigation/CardNagivation'
-import FlashCard from './components/FlashCard/FlashCard';
+import FlashCard from './components/FlashCard/FlashCard'
+import Button from './components/Button/Button'
+
+// to reduce repeatness
+const controls = ['Back', 'Flip', 'Next']
 
 function App() {
   return (
@@ -11,7 +15,20 @@ function App() {
       <TopBar/>
       <div className="container">
         <CardNavigation/>
-        <FlashCard/>
+        <div className='card-container'>
+          <FlashCard/>
+          <div className='card-controls'>
+            {controls.map((control)=>{
+                return <Button>{control}</Button>
+            })}
+
+                  {/* 
+                    <Button>Back</Button>
+                    <Button>Flip</Button>
+                    <Button>Next</Button>   
+                    */}
+          </div>
+        </div>
       </div>
     </React.Fragment>
   );
