@@ -29,10 +29,15 @@ app.use(exampleMiddleware)
 
 // Routes
 
+//localhost:8000
+// health check
 app.get('/', (req, res) => {
   res.send('Hello, world!')
 })
 
+// get all cards from deck without width
+// localhost:8000/decks/deckID/cards
+// localhost:8000/decks/4/cards
 app.get('/decks/:id/cards', async (req, res) => {
   const limit = req.query.limit
   const deck = await Deck.findById(req.params.id)
@@ -50,12 +55,22 @@ const cardsById = async (req, res) => {
   res.status(200).send(card)
 }
 
+
+//Get an individual card by id
+// localhost:8000/cards/c1bdb3be
 app.get('/cards/:id', cardsById)
 
 const isUrl = (value) => {
   const re = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
   return re.test(value)
 }
+
+// Create card
+// localhost:8000/cards/
+app.post('/test', async (req, res) => {
+  console.log(req.body)
+  res.send(req.body.test)
+})
 
 app.post('/cards', async (req, res) => {
   const cardRequest = req.body
