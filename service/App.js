@@ -37,7 +37,7 @@ app.get('/', (req, res) => {
 
 // get all cards from deck without width
 // localhost:8000/decks/deckID/cards
-// localhost:8000/decks/4/cards
+// localhost:8000/decks/4/cards   // 4 is deck id as an example
 app.get('/decks/:id/cards', async (req, res) => {
   const limit = req.query.limit
   const deck = await Deck.findById(req.params.id)
