@@ -9,7 +9,7 @@ const port = 8000
 
 // Connect to MongoDB
 
-const connectionString = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@crit-cluster.bpw1p.mongodb.net/notoriety?retryWrites=true&w=majority`
+const connectionString = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASSWORD}@cluster0.wbtmm.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
 try {
   await mongoose.connect(connectionString)
 } catch (err) {
@@ -29,15 +29,12 @@ app.use(exampleMiddleware)
 
 // Routes
 
-//localhost:8000
-// health check
 app.get('/', (req, res) => {
   res.send('Hello, world!')
 })
 
 // get all cards from deck without width
 // localhost:8000/decks/deckID/cards
-// localhost:8000/decks/4/cards   // 4 is deck id as an example
 app.get('/decks/:id/cards', async (req, res) => {
   const limit = req.query.limit
   const deck = await Deck.findById(req.params.id)
@@ -48,6 +45,7 @@ app.get('/decks/:id/cards', async (req, res) => {
   }
 })
 
+//Get an individual card by id
 const cardsById = async (req, res) => {
   const card = await Deck.findOne({
     'cards._id': req.params.id
@@ -55,9 +53,6 @@ const cardsById = async (req, res) => {
   res.status(200).send(card)
 }
 
-
-//Get an individual card by id
-// localhost:8000/cards/c1bdb3be
 app.get('/cards/:id', cardsById)
 
 const isUrl = (value) => {
@@ -65,13 +60,38 @@ const isUrl = (value) => {
   return re.test(value)
 }
 
-// Create card
-// localhost:8000/cards/
-app.post('/test', async (req, res) => {
-  console.log(req.body)
-  res.send(req.body.test)
+// Get a deck by ID
+app.get('/decks/:id', async (req, res) => {
+  const deck = await Deck.findById(req.params.id)
+  if (deck) {
+    res.send(deck.cards.slice(0, 5))
+  } else {
+    res.sendStatus(404)
+  }
 })
 
+
+// Get a deck by user
+app.get('/users/:id', async (req, res) => {
+  const deck = await Deck.findById(req.params.id)
+  if (deck) {
+    res.send(deck.cards.slice(0, 5))
+  } else {
+    res.sendStatus(404)
+  }
+})
+
+
+
+// Create a deck
+app.post('/decks', async (req, res) => {
+  //console.log(req.body)
+  //res.send(req.body.test)
+  res.send("incomplete");
+})
+
+
+// Create a card
 app.post('/cards', async (req, res) => {
   const cardRequest = req.body
   
