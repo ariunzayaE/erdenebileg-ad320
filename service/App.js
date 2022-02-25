@@ -3,6 +3,7 @@ import mongoose from 'mongoose'
 import cors from 'cors'
 
 import { Deck } from './models/Deck.js'
+import { User } from './models/User.js'
 
 const app = express()
 const port = 8000
@@ -19,7 +20,7 @@ try {
 // Middleware
 
 const exampleMiddleware = (req, res, next) => {
-  console.log('example middleware')
+  console.log(req.originalUrl)
   next()
 }
 
@@ -33,8 +34,7 @@ app.get('/', (req, res) => {
   res.send('Hello, world!')
 })
 
-// get all cards from deck without width
-// localhost:8000/decks/deckID/cards
+// Get all cards from deck
 app.get('/decks/:id/cards', async (req, res) => {
   const limit = req.query.limit
   const deck = await Deck.findById(req.params.id)
@@ -45,12 +45,14 @@ app.get('/decks/:id/cards', async (req, res) => {
   }
 })
 
-//Get an individual card by id
+// Get individual card by Id
 const cardsById = async (req, res) => {
-  const card = await Deck.findOne({
-    'cards._id': req.params.id
-  })
-  res.status(200).send(card)
+  const deck = await Deck.findOne({'cards._id': req.params.id})
+  if (deck) {
+    res.send(deck.cards.filter(card => card._id.toString() === req.params.id))
+  } else {
+    res.sendStatus(404)
+  }
 }
 
 app.get('/cards/:id', cardsById)
@@ -64,7 +66,7 @@ const isUrl = (value) => {
 app.get('/decks/:id', async (req, res) => {
   const deck = await Deck.findById(req.params.id)
   if (deck) {
-    res.send(deck.cards.slice(0, 5))
+    res.send(deck)
   } else {
     res.sendStatus(404)
   }
@@ -73,23 +75,13 @@ app.get('/decks/:id', async (req, res) => {
 
 // Get a deck by user
 app.get('/users/:id', async (req, res) => {
-  const deck = await Deck.findById(req.params.id)
+  const deck = await Deck.findOne({'userId': req.params.id})
   if (deck) {
-    res.send(deck.cards.slice(0, 5))
+    res.send(deck)
   } else {
     res.sendStatus(404)
   }
 })
-
-
-
-// Create a deck
-app.post('/decks', async (req, res) => {
-  //console.log(req.body)
-  //res.send(req.body.test)
-  res.send("incomplete");
-})
-
 
 // Create a card
 app.post('/cards', async (req, res) => {
@@ -97,15 +89,17 @@ app.post('/cards', async (req, res) => {
   
   if ((!cardRequest.frontImage && !cardRequest.frontText) || 
     (!cardRequest.backImage && !cardRequest.backText)) {
-    res.status(400).send('Card data incomplete')
+    return res.status(400).send('Card data incomplete')
   }
+  
 
-  if ((frontImage && !isUrl(frontImage)) || (backImage && !isUrl(backImage))) {
-    res.status(400).send('Image fields must be valid URLs')
+  if ((cardRequest.frontImage && !isUrl(cardRequest.frontImage)) ||
+  (cardRequest.backImage && !isUrl(cardRequest.backImage))) {
+    return res.status(400).send('Image fields must be valid URLs')
   }
 
   if (!cardRequest.deckId) {
-    res.status(400).send('Deck ID is required')
+    return res.status(400).send('Deck ID is required')
   }
 
   try {
@@ -117,15 +111,43 @@ app.post('/cards', async (req, res) => {
         backImage: cardRequest.backImage,
         backText: cardRequest.backText
       })
+      deck.size = deck.cards.length
       await deck.save()
-      res.sendStatus(204)
+      return res.sendStatus(204)
     } else {
-      res.sendStatus(404)
+      return res.sendStatus(404)
     }
   } catch (err) {
     console.log(`error in creating card ${err}`)
-    res.sendStatus(502)
+    return res.sendStatus(502)
   }
+})
+
+
+// Create a deck
+app.post('/decks', async (req, res) => {
+  const newDeck = new Deck({
+    name: req.body.name,
+    userId: new mongoose.Types.ObjectId(req.body.userId),
+    cards: req.body.cards,
+    size: req.body.cards.length
+  })
+
+  if ((!newDeck.name) || 
+    (!newDeck.userId) || (!newDeck.cards) || 
+    (!newDeck.size)) {
+    return res.status(400).send('Deck data incomplete')
+  }
+  const savedDeck = await newDeck.save()
+  res.send(savedDeck)
+})
+
+
+// Create a user
+app.post('/users', async (req, res) => {
+const newUser = new User({firstName: "Tim"})
+const user = await newUser.save()
+  res.send("incomplete");
 })
 
 app.listen(port, () => {
