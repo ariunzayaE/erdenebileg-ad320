@@ -34,7 +34,7 @@ app.get('/', (req, res) => {
   res.send('Hello, world!')
 })
 
-// Get all cards from deck
+// Get all cards for a deck, with the option to paginate results
 app.get('/decks/:id/cards', async (req, res) => {
   const limit = req.query.limit
   const deck = await Deck.findById(req.params.id)
