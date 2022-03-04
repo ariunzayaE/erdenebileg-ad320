@@ -1,4 +1,5 @@
 import { User } from '../models/User.js'
+import {validationResult} from 'express-validator'
 
 export const deckById = async (req, res) => {
   // We're assuming we get a user id from the headers until we cover auth
@@ -56,6 +57,10 @@ export const createCard = async (req, res) => {
   const userId = req.headers.user
   const deckId = req.params.id
   const newCard = req.body
+  const errors = validationResult(req)
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
   try {
     const user = await User.findById(userId)
     const deck = user.decks.id(deckId)

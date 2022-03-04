@@ -5,7 +5,13 @@ import axios from 'axios'
 const CreateFlashcard = ({ userId, deckId }) => {
   // how can we use state here to make sure we're validating info
   console.log(`[CreateFlashcard] deckId is ${deckId}`)
-  const [formValue, setFormValue] = useState({})
+  const [formValue, setFormValue] = useState({
+    frontText: "",
+    backText: "",
+    frontImage: "",
+    backImage: ""
+  })
+  const [buttonStatus, setButtonStatus] = useState(false)
 
   const isUrl = (value) => {
     const re = /((([A-Za-z]{3,9}:(?:\/\/)?)(?:[-;:&=\+\$,\w]+@)?[A-Za-z0-9.-]+|(?:www.|[-;:&=\+\$,\w]+@)[A-Za-z0-9.-]+)((?:\/[\+~%\/.\w-_]*)?\??(?:[-\+=&;%@.\w_]*)#?(?:[\w]*))?)/
@@ -13,22 +19,25 @@ const CreateFlashcard = ({ userId, deckId }) => {
   }
 
   const validateFormValue = (userInput) => {
-   return (
+   let isValid =  (
      userInput.frontImage && 
      userInput.backImage && 
      userInput.frontText && 
      userInput.backText && 
      isUrl(userInput.frontImage) && 
      isUrl(userInput.backImage))
+
+     setButtonStatus(isValid)
   }
 
   const handleChange = (event) => {
     event.preventDefault()
     console.log("[CreateFlashcard] onChange ", event)
-    console.log(validateFormValue(formValue), "validation status")
     const currentValues = formValue
     currentValues[event.target.name] = event.target.value
     setFormValue(currentValues)
+    validateFormValue(formValue)
+    console.log(buttonStatus, "validation status")
   }
   
   const handleSubmit = async (event) => {
@@ -82,7 +91,7 @@ const CreateFlashcard = ({ userId, deckId }) => {
         id="backText"
         onChange={handleChange}
       />
-      <Button type="submit" disabled={validateFormValue(formValue) ? true : false} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+      <Button type="submit" disabled={!buttonStatus} fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
         Submit
       </Button>
     </Stack>
