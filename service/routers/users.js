@@ -26,6 +26,7 @@ const getUsers = async (req, res) => {
 
 const getUsers = async (req, res) => {
   const {userId} = req.user
+  console.log(req.user)
   const requestor = await User.findById(userId)
   if(requestor.role === 'admin' || requestor.role === 'superuser'){
     const users = await User.find({})
@@ -44,12 +45,16 @@ const getUsersById = async (req, res) => {
 */
 
 const getUsersById = async (req, res) => {
-  const {userId} = req.user
-  const requestor = await User.findById(userId)
+  const {userId} = req.user // i wrote myself user id in the localhost url
+  const requestor = await User.findById(userId)   // hacker user 
   if(requestor.role === 'admin' || requestor.role === 'superuser'){
-    const user = await User.findById(req.params.id)
+    const user = await User.findById(req.params.id) // mongoDb user // hacker iin haij bga hun
     res.send(sanitizeUsers(user))
-  } else {
+  } 
+  else if(requestor.role === 'user' && requestor._id === user._id) {
+    res.send(sanitizeUsers(user))
+  }
+  else {
     res.status(403).send('Forbidden')
   }
 }
@@ -62,6 +67,7 @@ const updateUser = async (req, res) => {
 }
 */
 
+/*
 const updateUser = async (req, res) => {
   const {userId} = req.user
   const requestor = await User.findByIdAndUpdate(userId)
@@ -73,6 +79,7 @@ const updateUser = async (req, res) => {
     res.status(503).send('Can not update the user')
   }
 }
+*/
 
 
 /*
@@ -83,6 +90,7 @@ const deleteUser = async (req, res) => {
 }
 */
 
+/*
 const deleteUser = async (req, res) => {
     const {userId} = req.user
     const requestor = await User.findById(userId)
@@ -94,6 +102,7 @@ const deleteUser = async (req, res) => {
       res.status(503).send('Can not delete the user')
     }
   }
+  */
 
 usersRouter.get('/', getUsers)
 usersRouter.get('/:id', getUsersById)
