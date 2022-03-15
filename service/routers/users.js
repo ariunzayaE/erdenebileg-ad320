@@ -46,15 +46,13 @@ const getUsersById = async (req, res) => {
 
 const getUsersById = async (req, res) => {
   const {userId} = req.user // i wrote myself user id in the localhost url
-  const requestor = await User.findById(userId)   // hacker user 
-  if(requestor.role === 'admin' || requestor.role === 'superuser'){
-    const user = await User.findById(req.params.id) // mongoDb user // hacker iin haij bga hun
+  const requestor = await User.findById(userId)   // the user who is requesting user ID 
+  if(requestor.role === 'admin' || 
+  requestor.role === 'superuser' ||
+  (requestor.role === 'user' && requestor._id.toString() === req.params_id.toString())){
+    const user = await User.findById(req.params.id)
     res.send(sanitizeUsers(user))
-  } 
-  else if(requestor.role === 'user' && requestor._id === user._id) {
-    res.send(sanitizeUsers(user))
-  }
-  else {
+  } else {
     res.status(403).send('Forbidden')
   }
 }
@@ -67,19 +65,20 @@ const updateUser = async (req, res) => {
 }
 */
 
-/*
 const updateUser = async (req, res) => {
   const {userId} = req.user
   const requestor = await User.findByIdAndUpdate(userId)
-  if(requestor.role === 'admin'){
+  if(requestor.role === 'admin' || 
+  requestor.role === 'superuser' ||
+  (requestor.role === 'user' && requestor._id.toString() === req.params_id.toString())
+  ){
   const result = await User.findByIdAndUpdate(req.params.id, req.body)
-  res.send(sanitizeUsers(result))
+  res.send(sanitizeUsers([result]))
   console.log('result ', result)
   } else{
     res.status(503).send('Can not update the user')
   }
 }
-*/
 
 
 /*
@@ -107,6 +106,6 @@ const deleteUser = async (req, res) => {
 usersRouter.get('/', getUsers)
 usersRouter.get('/:id', getUsersById)
 usersRouter.put('/:id', updateUser)
-usersRouter.delete('/:id', deleteUser)
+//usersRouter.delete('/:id', deleteUser)
 
 export default usersRouter
