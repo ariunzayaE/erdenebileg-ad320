@@ -15,15 +15,6 @@ function sanitizeUsers(users) {
   return sanitizedUsers
 }
 
-/* initial getUsers
-const getUsers = async (req, res) => {
-    const users = await User.find({})
-    sanitizeUsers(users)
-    res.send(users)
-  }
-}
-*/
-
 const getUsers = async (req, res) => {
   const {userId} = req.user
   console.log(req.user)
@@ -35,14 +26,6 @@ const getUsers = async (req, res) => {
     res.status(403).send('Forbidden')
   }
 }
-
-/*
-const getUsersById = async (req, res) => {
-    const user = await User.findById(req.params.id)
-    res.send(user)
-  }
-}
-*/
 
 const getUsersById = async (req, res) => {
   const {userId} = req.user // i wrote myself user id in the localhost url
@@ -57,20 +40,12 @@ const getUsersById = async (req, res) => {
   }
 }
 
-/*
-const updateUser = async (req, res) => {
-  const result = await User.findByIdAndUpdate(req.params.id, req.body)
-  console.log('result ', result)
-  res.sendStatus(503)
-}
-*/
-
 const updateUser = async (req, res) => {
   const {userId} = req.user
   const requestor = await User.findByIdAndUpdate(userId)
   if(requestor.role === 'admin' || 
-  requestor.role === 'superuser' ||
-  (requestor.role === 'user' && requestor._id.toString() === req.params_id.toString())
+  (requestor.role === 'superuser' && requestor._id === req.params_id) ||
+  (requestor.role === 'user' && requestor._id === req.params_id)
   ){
   const result = await User.findByIdAndUpdate(req.params.id, req.body)
   res.send(sanitizeUsers([result]))
@@ -80,32 +55,23 @@ const updateUser = async (req, res) => {
   }
 }
 
-
-/*
 const deleteUser = async (req, res) => {
-  const result = await User.findByIdAndUpdate(req.params.id, { active: false })
-  console.log('result ', result)
-  res.sendStatus(503)
-}
-*/
-
-/*
-const deleteUser = async (req, res) => {
-    const {userId} = req.user
-    const requestor = await User.findById(userId)
-    if(requestor.role === 'admin'){
-      const result = await User.findByIdAndUpdate(req.params.id, { active: false })
-      res.send(sanitizeUsers(result))
+  const {userId} = req.user
+  const requestor = await User.findById(userId)
+  if(requestor.role === 'admin' || 
+  (requestor.role === 'superuser' && requestor._id === req.params_id)
+  ){
+    const result = await User.findByIdAndUpdate(req.params.id, { active: false })
+    res.send(sanitizeUsers([result]))
     console.log('result ', result)
     } else {
       res.status(503).send('Can not delete the user')
     }
   }
-  */
 
 usersRouter.get('/', getUsers)
 usersRouter.get('/:id', getUsersById)
 usersRouter.put('/:id', updateUser)
-//usersRouter.delete('/:id', deleteUser)
+usersRouter.delete('/:id', deleteUser)
 
 export default usersRouter
