@@ -21,17 +21,27 @@ const AuthProvider = ({ children }) => {
         } catch (err) {
             console.log(`Login error ${err}`)
             // Assignment: what should we do if this fails?
+            alert('Login failed. Please try again.')
+            
         }
     }
 
-    const register = (email, password, callback) => { 
-        // Assignment: how do we register someone?  
-        try {
-            const registerResponse = await axios.post(...)
-            const something = registerResponse.
+    const register = async (email, password, callback) => { 
+        console.log("[Register]")
+        console.log(email, password)
+        try{
+            const regResponse = await axios.post(
+                'http://localhost:8000/auth/register', 
+                { email: email, password: password }, 
+                { 'content-type': 'application/json' }
+            )
+            //const regToken = regResponse.data.token
+            console.log("String test", regResponse.data)
+            setAuth({ token: regResponse.data.token, user: regResponse.data.user })
             callback()
-        } catch(err) {
+        } catch (err) {
             console.log(`Register error ${err}`)
+            alert('Register failed. Please try again.')
         }
     }
 

@@ -1,7 +1,9 @@
 import React from 'react'
+import { useAuth } from '../Auth/AuthProvider'
 import { Button, Box, TextField, Typography } from '@mui/material'
 
 const Register = () => {
+  const { register } = useAuth()
   // Assignment: use the useAuth hook here to handle registering a new user
   const handleSubmit = (event) => {
     event.preventDefault()
@@ -10,6 +12,7 @@ const Register = () => {
       email: data.get('email'),
       password: data.get('password'),
     })
+    register(data.get('email'), data.get('password'))
   }
 
   return (
