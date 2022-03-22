@@ -8,6 +8,7 @@ import Topbar from './components/Topbar/Topbar';
 import reportWebVitals from './reportWebVitals';
 import Login from './components/Login/Login'
 import Register from './components/Register/Register'
+import User from './components/User/User'
 import Protected from './components/Auth/Protected'
 import CreateFlashcard from './components/Flashcard/CreateFlashcard'
 import AuthProvider from './components/Auth/AuthProvider'
@@ -21,7 +22,7 @@ ReactDOM.render(
         <Routes>
           <Route path="/" element={<Welcome />} />
           {/* Assignment: Add a route for /user to redirect to from Login */}
-          <Route path="/user" element={<user />} />
+          <Route path="/user" element={<User />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/app" element={<Protected><App /></Protected>} />

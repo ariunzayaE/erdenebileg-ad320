@@ -1,10 +1,12 @@
 import React from 'react'
 
 const User = ({ user }) => {
-    const {firstName, _id, decks } = user
+    const {firstName, lastName, email, _id, decks } = user
     return (
         <>
         <span>{firstName}</span>
+        <span>{lastName}</span>
+        <span>{email}</span>
         <span>{_id}</span>
         <ul>
         {decks.map((deck) => {
@@ -14,3 +16,4 @@ const User = ({ user }) => {
         </>
     )
 }
+export default User

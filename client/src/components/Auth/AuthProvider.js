@@ -22,7 +22,6 @@ const AuthProvider = ({ children }) => {
             console.log(`Login error ${err}`)
             // Assignment: what should we do if this fails?
             alert('Login failed. Please try again.')
-            
         }
     }
 
@@ -35,8 +34,6 @@ const AuthProvider = ({ children }) => {
                 { email: email, password: password }, 
                 { 'content-type': 'application/json' }
             )
-            //const regToken = regResponse.data.token
-            console.log("String test", regResponse.data)
             setAuth({ token: regResponse.data.token, user: regResponse.data.user })
             callback()
         } catch (err) {
