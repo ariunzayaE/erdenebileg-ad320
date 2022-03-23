@@ -27,19 +27,18 @@ const AuthProvider = ({ children }) => {
 
     const register = async (email, password, callback) => { 
         console.log("[Register]")
-        console.log(email, password)
         try{
             const regResponse = await axios.post(
                 'http://localhost:8000/auth/register', 
                 { email: email, password: password }, 
                 { 'content-type': 'application/json' }
             )
-            setAuth({ token: regResponse.data.token, user: regResponse.data.user })
             callback()
         } catch (err) {
             console.log(`Register error ${err}`)
             alert('Register failed. Please try again.')
         }
+        console.log(email, password)
     }
 
     const authCtx = {

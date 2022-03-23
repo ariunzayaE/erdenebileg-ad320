@@ -22,7 +22,7 @@ ReactDOM.render(
         <Routes>
           <Route path="/" element={<Welcome />} />
           {/* Assignment: Add a route for /user to redirect to from Login */}
-          <Route path="/user" element={<User />} />
+          <Route path="/user" element={<Protected><User /></Protected>} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/app" element={<Protected><App /></Protected>} />

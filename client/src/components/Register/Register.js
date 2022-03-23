@@ -15,9 +15,12 @@ const Register = () => {
       email: data.get('email'),
       password: data.get('password'),
     })
-    register(data.get('email'), data.get('password'), () => {
+
+    const myCallback = () => {
       navigate("/login", { replace: true })
-    })
+    }
+
+    register(data.get('email'), data.get('password'), myCallback)
   }
 
   return (
